@@ -489,7 +489,7 @@ For all other changes (copy, styling, bug fixes, new components): deploy → com
 ## TBD — set per project before first session
 
 ```
-GitHub repo:        vormaechea-designli/buckhub-landing
+GitHub repo:        designli/buckhub-landing  (transferred from vormaechea-designli to the Designli org, 2026-07-27)
 Slack channel:      none yet — Slack not set up for this project
 Slack channel ID:   none yet
 Slack webhook URL:  none yet — feedback widget will create GitHub Issues only until a webhook exists
