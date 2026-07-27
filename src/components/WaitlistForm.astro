@@ -80,16 +80,16 @@ const { instanceId, theme = "light" } = Astro.props;
     font-family: var(--font-sans);
     font-size: 1rem;
     padding: 0.85rem 1rem;
-    border: 1.5px solid #d9d6cd;
+    border: 1.5px solid var(--border);
     border-radius: 10px;
-    background: #fff;
+    background: var(--input-fill);
     color: var(--ink);
     transition:
       border-color 0.15s ease,
       box-shadow 0.15s ease;
   }
   input::placeholder {
-    color: #a7a59c;
+    color: var(--faint);
   }
   input:focus {
     outline: none;
@@ -122,8 +122,8 @@ const { instanceId, theme = "light" } = Astro.props;
     height: 56px;
     margin: 0 auto 1rem;
     border-radius: 999px;
-    background: var(--sage);
-    color: var(--pine);
+    background: var(--success);
+    color: var(--on-rust);
     font-size: 1.8rem;
     font-weight: 700;
     display: grid;

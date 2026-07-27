@@ -1,6 +1,6 @@
 ---
 import "@fontsource-variable/inter";
-import "@fontsource-variable/lora";
+import "@fontsource-variable/montserrat";
 import FeedbackWidget from "../components/FeedbackWidget.astro";
 
 interface Props {
@@ -57,20 +57,52 @@ const {
 
     <style is:global>
       :root {
-        /* Brand palette — extracted from Buck Hub UI designs */
-        --pine: #2b4538;
-        --pine-mid: #3c5247;
-        --sage: #8ec398;
-        --tan: #cebc84;
-        --cream: #e4dbbd;
-        --paper: #fafaf9;
-        --ink: #181f19;
+        /* Buck Hub — Black & Rust palette.
+           Old green token NAMES are kept but repointed to the new values so
+           existing usages update in one place; conflicting dark-surface roles
+           are fixed at their specific call sites. */
 
-        --pine-soft: rgba(43, 69, 56, 0.08);
-        --ink-muted: #4a554c;
+        /* Brand */
+        --pine: #a05a2c; /* PRIMARY accent (rust) — buttons, eyebrow, links, emphasis */
+        --pine-mid: #c06b3a; /* rust hover / light */
+        --rust-border: #b0603a;
+        --gold: #b5893f; /* secondary accent */
+        --sage: #e0b588; /* light accent for on-dark contexts */
+        --tan: #b5893f; /* gold (legacy name) */
+        --cream: #f4eae0; /* rust tint background (eyebrow pill, soft fills) */
+        --rust-tint-border: #e6d4c2;
+        --on-rust: #fff8f1;
 
-        --font-serif: "Lora Variable", "Iowan Old Style", "Palatino Linotype",
-          Palatino, "Georgia", ui-serif, serif;
+        /* Dark surfaces */
+        --chrome: #12100e; /* dark hero / section bg */
+        --footer: #0c0b09;
+        --dark-input: #1c1a17;
+        --dark-border: #3a362f;
+        --on-dark-heading: #fffdfa;
+        --on-dark-body: #e8dfd3;
+        --on-dark-muted: #a9a199;
+        --on-dark-faint: #7b7976;
+
+        /* Light surfaces */
+        --paper: #f7f4ef; /* canvas (page bg) */
+        --band: #ede9e1; /* alternating band */
+        --card: #ffffff;
+        --input-fill: #fbf9f5;
+        --border: #e4dbcd;
+
+        /* Text on light */
+        --ink: #2b2018; /* headings */
+        --body: #4a423a; /* body text */
+        --ink-muted: #6f6a62; /* muted (legacy name kept) */
+        --faint: #9a948b; /* placeholder / faint */
+
+        /* Status */
+        --success: #248d5f;
+
+        --pine-soft: rgba(160, 90, 44, 0.1); /* rust tint (focus rings, hovers) */
+
+        --font-serif: "Montserrat Variable", ui-sans-serif, system-ui,
+          -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; /* display */
         --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
           "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
@@ -86,8 +118,8 @@ const {
 
         --maxw: 1140px;
         --radius: 14px;
-        --shadow: 0 1px 2px rgba(24, 31, 25, 0.06),
-          0 12px 32px rgba(24, 31, 25, 0.08);
+        --shadow: 0 1px 2px rgba(43, 32, 24, 0.06),
+          0 12px 32px rgba(43, 32, 24, 0.1);
       }
 
       * {
@@ -101,7 +133,7 @@ const {
       body {
         margin: 0;
         background: var(--paper);
-        color: var(--ink);
+        color: var(--body);
         font-family: var(--font-sans);
         font-size: 17px;
         line-height: 1.6;
@@ -113,9 +145,10 @@ const {
       h2,
       h3 {
         font-family: var(--font-serif);
-        font-weight: 700;
-        line-height: 1.25;
-        letter-spacing: 0;
+        font-weight: 800;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        color: var(--ink);
         margin: 0;
       }
 
