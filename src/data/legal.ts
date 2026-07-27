@@ -1,18 +1,14 @@
 // Central legal values for the privacy & terms pages.
-//
-// ⚠️ PLACEHOLDERS PENDING CLIENT DATA — fill these three before sharing the
-// site publicly. They are the only values not yet finalized; everything else
-// is real. Search for "PENDING" to find them.
-export const PENDING = true; // flip to false once the three values below are real
+export const PENDING = false; // client legal details confirmed (2026-07-09)
 
-// Client legal entity acting as Data Controller (NOT Designli — this is a client product).
-export const COMPANY_NAME = "[Client legal entity — PENDING]";
+// Client legal entity acting as Data Controller (a client product, not Designli).
+export const COMPANY_NAME = "Buck Hub LLC";
 
 // Where data-deletion / GDPR requests go.
-export const CONTACT_EMAIL = "[legal contact email — PENDING]";
+export const CONTACT_EMAIL = "Brandi.Heffner@gmail.com";
 
 // Registered business address for the data-controller block.
-export const BUSINESS_ADDRESS = "[registered business address — PENDING]";
+export const BUSINESS_ADDRESS = "440 35 Rd, Palisade, CO 81526";
 
 // --- Finalized values ---
 export const PRODUCT_NAME = "Buck Hub";
