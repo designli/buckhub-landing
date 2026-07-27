@@ -260,12 +260,15 @@
       submitBtn.disabled = true;
       submitBtn.textContent = "Sending…";
 
-      // Durable backstop: record in PostHog regardless of GitHub/Slack config.
+      // Durable store: record the full feedback in PostHog so nothing is lost
+      // even if the GitHub/Slack path is unavailable.
       try {
         (window as any).posthog?.capture("feedback_submitted", {
           feedback_type: type,
-          page_url: url,
+          message: message,
+          email: email, // empty string if not provided
           has_email: Boolean(email),
+          page_url: url,
         });
       } catch {
         /* ignore */
