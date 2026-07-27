@@ -62,8 +62,9 @@ Product description:  One trusted source of truth for people who own, train, and
 Target user:          Ranchers & trainers (primary), bull owners (secondary), and partner-investors (secondary) in the bucking-bull business.
 Value proposition:    "No Fluff, No Bull." — One place to see what you own, what it's doing, and the media that proves it. Rugged, grounded, plain-spoken.
 Domain:               Not yet acquired — to be connected later.
-Brand colors:         Pine green #2B4538 (primary) · Mid green #3C5247 · Sage #8EC398 (accent) · Tan #CEBC84 · Cream #E4DBBD · Paper #FAFAF9 (bg) · Ink #181F19 (text)
-Logo file:            public/buck-hub-logo.svg (Brown & Tan, with name) · public/buck-hub-mark.svg (gray mark, no name)
+Brand colors:         BLACK & RUST (2026-07 — replaced the old green scheme). Rust #A05A2C (primary accent) · hover #C06B3A · Gold #B5893F (secondary) · dark surfaces #12100E (hero/CTA) & #0C0B09 (footer) · Canvas #F7F4EF (bg) · Ink #2B2018 (headings) · body #4A423A · muted #6F6A62. Success #248D5F. Full token set in src/layouts/Layout.astro :root.
+Fonts:                Montserrat (display / headings) + Inter (body/UI) — both self-hosted via @fontsource.
+Logo file:            public/buck-hub-logo.webp (black & gray lockup, used in nav) · public/buck-hub-mark.svg (mark)
 ```
 
 ---
