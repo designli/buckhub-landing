@@ -21,8 +21,16 @@ export const PLATFORM = "Web App"; // waitlist phase
 export const THIRD_PARTY_PRIVACY = [
   { name: "PostHog", url: "https://posthog.com/privacy" },
   { name: "Vercel", url: "https://vercel.com/legal/privacy-policy" },
+  {
+    name: "GitHub",
+    url: "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+  },
 ];
 export const THIRD_PARTY_TERMS = [
   { name: "PostHog", url: "https://posthog.com/terms" },
   { name: "Vercel", url: "https://vercel.com/legal/terms" },
+  {
+    name: "GitHub",
+    url: "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+  },
 ];
