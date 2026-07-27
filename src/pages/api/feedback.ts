@@ -111,5 +111,15 @@ export const POST: APIRoute = async ({ request }) => {
 
   // Always return ok so the user sees a confirmation; the client also records
   // the feedback in PostHog as a durable backstop.
-  return json({ ok: true, issueUrl, issueCreated: Boolean(issueUrl) });
+  return json({
+    ok: true,
+    issueUrl,
+    issueCreated: Boolean(issueUrl),
+    _debug: {
+      hasToken: Boolean(token),
+      tokenTail: token ? String(token).slice(-6) : null,
+      repo: repo || null,
+      warnings,
+    },
+  });
 };
