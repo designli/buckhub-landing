@@ -5,6 +5,10 @@ name: Deploy Landing Page
 # org; the Vercel project lives in the client's Vercel team. The token is what
 # bridges the two — there is no Vercel<->GitHub app installation involved.
 #
+# Deployments are created without git metadata attached — see the "Strip git
+# metadata" step below. Which commit produced a deployment is traceable from
+# this workflow's run history in the Actions tab, not from the Vercel dashboard.
+#
 # Required repository secrets (Settings -> Secrets and variables -> Actions):
 #   VERCEL_TOKEN                       token from the client's Vercel team
 #   VERCEL_ORG_ID                      the client's Vercel team ID
@@ -52,6 +56,24 @@ jobs:
           vercel_project_id: ${{ env.VERCEL_PROJECT_ID }}
           is_production: ${{ github.ref_name == 'main' }}
           node_version: ${{ env.NODE_VERSION }}
+
+      # The Vercel CLI attaches git metadata — commit SHA, message, branch and
+      # author — to every deployment by reading the local .git directory. There
+      # is no CLI flag to turn that off, so we remove .git instead. Without it
+      # the CLI has nothing to read and the deployment lands in the client's
+      # Vercel dashboard with no commit and no author attached.
+      #
+      # Safe here because nothing below this point needs git: the build already
+      # ran, npm ci installs only registry packages, and `vercel deploy` is
+      # linked to the project through VERCEL_ORG_ID / VERCEL_PROJECT_ID rather
+      # than through a git remote. The runner is discarded after the job, so
+      # this touches nothing in the real repo.
+      #
+      # If you ever add a step after this one that needs git history, move this
+      # step to sit immediately before Deploy — it must stay after Build and
+      # before Deploy to do its job.
+      - name: Strip git metadata from the deployment
+        run: rm -rf .git
 
       - name: Deploy
         id: deploy

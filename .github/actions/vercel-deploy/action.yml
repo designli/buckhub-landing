@@ -1,6 +1,12 @@
 name: "Vercel Deploy"
 description: "Deploys the prebuilt .vercel/output to Vercel and optionally aliases it"
 
+# Note: this action does not strip git metadata. The Vercel CLI reads the local
+# .git directory and attaches the commit SHA, message, branch and author to the
+# deployment. If you do not want that on the deployment, the calling workflow
+# must remove .git before this action runs — deploy-frontend.yml does exactly
+# that in its "Strip git metadata from the deployment" step.
+
 inputs:
   vercel_token:
     description: "Vercel API token"
