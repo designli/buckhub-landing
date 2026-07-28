@@ -1,0 +1,101 @@
+name: "Vercel Build"
+description: "Pulls Vercel project settings and builds this Astro site locally"
+
+inputs:
+  vercel_token:
+    description: "Vercel API token"
+    required: true
+  vercel_org_id:
+    description: "Vercel organization / team ID"
+    required: true
+  vercel_project_id:
+    description: "Vercel project ID"
+    required: true
+  is_production:
+    description: "Whether this is a production build ('true' or 'false')"
+    required: true
+  node_version:
+    description: "Node.js version"
+    required: false
+    default: "22"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node_version }}
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    # Pulls the Vercel project's settings and environment variables into
+    # .vercel/ so the local build matches what the dashboard would produce.
+    # The env scope must match the deploy target, otherwise `vercel build`
+    # looks for an env file that was never written.
+    #
+    # NOTE: the vars must be present in the matching scope in Vercel
+    # (Settings -> Environment Variables). If only Production is populated,
+    # preview builds will ship without PUBLIC_POSTHOG_KEY and analytics will
+    # silently no-op. Tick both Production and Preview when adding them.
+    - name: Pull Vercel project settings
+      shell: bash
+      env:
+        VERCEL_ORG_ID: ${{ inputs.vercel_org_id }}
+        VERCEL_PROJECT_ID: ${{ inputs.vercel_project_id }}
+        VERCEL_TOKEN: ${{ inputs.vercel_token }}
+      run: |
+        if [ "${{ inputs.is_production }}" = "true" ]; then
+          TARGET=production
+        else
+          TARGET=preview
+        fi
+        echo "TARGET=$TARGET" >> "$GITHUB_ENV"
+        npx vercel@latest pull --yes --environment="$TARGET" --token="$VERCEL_TOKEN"
+
+    - name: Build project
+      shell: bash
+      env:
+        VERCEL_ORG_ID: ${{ inputs.vercel_org_id }}
+        VERCEL_PROJECT_ID: ${{ inputs.vercel_project_id }}
+        VERCEL_TOKEN: ${{ inputs.vercel_token }}
+      run: |
+        # Source the env file `vercel pull` wrote, then log a presence-only
+        # check — values are never printed. A "NO" on a PUBLIC_* var means the
+        # pull did not deliver it and the built bundle will be missing it,
+        # because Astro inlines PUBLIC_* vars at build time.
+        ENV_FILE=".vercel/.env.${TARGET}.local"
+        if [ -f "$ENV_FILE" ]; then
+          set -a; . "$ENV_FILE"; set +a
+        else
+          echo "::warning::$ENV_FILE not found — no environment variables were pulled from Vercel."
+        fi
+
+        present() { [ -n "$1" ] && echo yes || echo NO; }
+
+        # Build-time (inlined into the client bundle by Astro):
+        echo "env-check: PUBLIC_POSTHOG_KEY  present=$(present "$PUBLIC_POSTHOG_KEY")"
+        echo "env-check: PUBLIC_POSTHOG_HOST present=$(present "$PUBLIC_POSTHOG_HOST")"
+        # Runtime only (read by the /api/feedback serverless function):
+        echo "env-check: GITHUB_TOKEN        present=$(present "$GITHUB_TOKEN")"
+        echo "env-check: GITHUB_REPO         present=$(present "$GITHUB_REPO")"
+        echo "env-check: SLACK_WEBHOOK_URL   present=$(present "$SLACK_WEBHOOK_URL")  (optional)"
+
+        if [ -z "$PUBLIC_POSTHOG_KEY" ]; then
+          echo "::warning::PUBLIC_POSTHOG_KEY is missing — waitlist signups will not be tracked in PostHog."
+        fi
+
+        if [ "${{ inputs.is_production }}" = "true" ]; then
+          npx vercel@latest build --prod --token="$VERCEL_TOKEN"
+        else
+          npx vercel@latest build --token="$VERCEL_TOKEN"
+        fi
+
+# The previous version of this file wrote a vercel.json with a
+# `pnpm --filter @buckhub/web run build` command and an apps/web/.next output
+# directory. That was carried over from the app monorepo. This repo is a single
+# npm package at the root, and the @astrojs/vercel adapter emits .vercel/output
+# on its own, so no build/output overrides are needed.
