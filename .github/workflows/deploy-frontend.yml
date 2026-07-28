@@ -1,0 +1,101 @@
+name: Deploy Landing Page
+
+# Deploys this Astro landing page to the client's Vercel project using a Vercel
+# API token stored as a GitHub secret. The repo lives in the Designli GitHub
+# org; the Vercel project lives in the client's Vercel team. The token is what
+# bridges the two — there is no Vercel<->GitHub app installation involved.
+#
+# Deployments are created without git metadata attached — see the "Strip git
+# metadata" step below. Which commit produced a deployment is traceable from
+# this workflow's run history in the Actions tab, not from the Vercel dashboard.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   VERCEL_TOKEN                       token from the client's Vercel team
+#   VERCEL_ORG_ID                      the client's Vercel team ID
+#   VERCEL_PROJECT_ID_BUCKHUB_LANDING  the landing page's Vercel project ID
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID_BUCKHUB_LANDING }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  NODE_VERSION: "22"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+# No `paths:` filter on purpose. Every push to main must reach production so the
+# repo and the live site never drift apart. The previous version of this file
+# filtered on apps/web/** and packages/** — paths that do not exist in this
+# repo — which meant it could never fire on a push.
+
+permissions:
+  contents: read
+
+# One deploy at a time per branch; a newer push supersedes an in-flight run.
+concurrency:
+  group: deploy-landing-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # main -> production deploy. A manual workflow_dispatch from any other
+      # branch produces a preview deploy instead.
+      - name: Build
+        id: build
+        uses: ./.github/actions/vercel-build
+        with:
+          vercel_token: ${{ env.VERCEL_TOKEN }}
+          vercel_org_id: ${{ env.VERCEL_ORG_ID }}
+          vercel_project_id: ${{ env.VERCEL_PROJECT_ID }}
+          is_production: ${{ github.ref_name == 'main' }}
+          node_version: ${{ env.NODE_VERSION }}
+
+      # The Vercel CLI attaches git metadata — commit SHA, message, branch and
+      # author — to every deployment by reading the local .git directory. There
+      # is no CLI flag to turn that off, so we remove .git instead. Without it
+      # the CLI has nothing to read and the deployment lands in the client's
+      # Vercel dashboard with no commit and no author attached.
+      #
+      # Safe here because nothing below this point needs git: the build already
+      # ran, npm ci installs only registry packages, and `vercel deploy` is
+      # linked to the project through VERCEL_ORG_ID / VERCEL_PROJECT_ID rather
+      # than through a git remote. The runner is discarded after the job, so
+      # this touches nothing in the real repo.
+      #
+      # If you ever add a step after this one that needs git history, move this
+      # step to sit immediately before Deploy — it must stay after Build and
+      # before Deploy to do its job.
+      - name: Strip git metadata from the deployment
+        run: rm -rf .git
+
+      - name: Deploy
+        id: deploy
+        uses: ./.github/actions/vercel-deploy
+        with:
+          vercel_token: ${{ env.VERCEL_TOKEN }}
+          vercel_org_id: ${{ env.VERCEL_ORG_ID }}
+          vercel_project_id: ${{ env.VERCEL_PROJECT_ID }}
+          is_production: ${{ github.ref_name == 'main' }}
+
+      - name: Report deployment URL
+        if: always() && steps.deploy.outputs.deploy_url != ''
+        run: |
+          {
+            echo "### Landing page deployed"
+            echo ""
+            echo "- Target: ${{ github.ref_name == 'main' && 'production' || 'preview' }}"
+            echo "- URL: ${{ steps.deploy.outputs.deploy_url }}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+# Slack deploy notifications were removed: this repo has no
+# .github/actions/slack-deploy-notify action (the step copied from the app repo
+# referenced one that does not exist here, so every run failed on its first
+# step), and no Slack webhook is configured for this project yet. Add the
+# notification back once SLACK_WEBHOOK_URL exists.

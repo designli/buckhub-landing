@@ -1,0 +1,63 @@
+name: "Vercel Deploy"
+description: "Deploys the prebuilt .vercel/output to Vercel and optionally aliases it"
+
+# Note: this action does not strip git metadata. The Vercel CLI reads the local
+# .git directory and attaches the commit SHA, message, branch and author to the
+# deployment. If you do not want that on the deployment, the calling workflow
+# must remove .git before this action runs — deploy-frontend.yml does exactly
+# that in its "Strip git metadata from the deployment" step.
+
+inputs:
+  vercel_token:
+    description: "Vercel API token"
+    required: true
+  vercel_org_id:
+    description: "Vercel organization / team ID"
+    required: true
+  vercel_project_id:
+    description: "Vercel project ID"
+    required: true
+  is_production:
+    description: "Whether this is a production deploy ('true' or 'false')"
+    required: true
+  alias:
+    description: "Custom domain to alias this deployment to (optional)"
+    required: false
+    default: ""
+
+outputs:
+  deploy_url:
+    description: "The deployment URL"
+    value: ${{ steps.deploy.outputs.deploy_url }}
+
+runs:
+  using: "composite"
+  steps:
+    # --prebuilt uploads the .vercel/output produced by the build step instead
+    # of rebuilding on Vercel's infrastructure.
+    - name: Deploy to Vercel
+      id: deploy
+      shell: bash
+      env:
+        VERCEL_ORG_ID: ${{ inputs.vercel_org_id }}
+        VERCEL_PROJECT_ID: ${{ inputs.vercel_project_id }}
+        VERCEL_TOKEN: ${{ inputs.vercel_token }}
+      run: |
+        if [ "${{ inputs.is_production }}" = "true" ]; then
+          DEPLOY_URL=$(npx vercel@latest deploy --prebuilt --prod --yes --token="$VERCEL_TOKEN")
+        else
+          DEPLOY_URL=$(npx vercel@latest deploy --prebuilt --yes --token="$VERCEL_TOKEN")
+        fi
+        echo "deploy_url=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
+        echo "Deployed to $DEPLOY_URL"
+
+    - name: Alias to stable domain
+      if: inputs.alias != ''
+      shell: bash
+      env:
+        VERCEL_ORG_ID: ${{ inputs.vercel_org_id }}
+        VERCEL_PROJECT_ID: ${{ inputs.vercel_project_id }}
+        VERCEL_TOKEN: ${{ inputs.vercel_token }}
+      run: |
+        npx vercel@latest alias "${{ steps.deploy.outputs.deploy_url }}" "${{ inputs.alias }}" \
+          --token="$VERCEL_TOKEN"
