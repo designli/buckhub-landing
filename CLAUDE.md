@@ -489,6 +489,9 @@ For all other changes (copy, styling, bug fixes, new components): deploy → com
 ## TBD — set per project before first session
 
 ```
+PostHog project:    US region (https://us.i.posthog.com). Public project API key: phc_wnJLRAskB6BKTGFDQENAKiZTUw4y5Wd3LoFf5vGTMGwC
+                    Set as PUBLIC_POSTHOG_KEY in .env AND in Vercel (baked into the JS bundle at build time — changing one alone has no effect).
+                    Switched to this NEW project 2026-07-28, replacing the old phc_sevk… project. Old project's events/signups did NOT transfer.
 GitHub repo:        designli/buckhub-landing  (transferred from vormaechea-designli to the Designli org, 2026-07-27)
 Slack channel:      none yet — Slack not set up for this project
 Slack channel ID:   none yet
