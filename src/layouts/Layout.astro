@@ -73,11 +73,11 @@ const {
         --rust-tint-border: #e6d4c2;
         --on-rust: #fff8f1;
 
-        /* Dark surfaces */
-        --chrome: #12100e; /* dark hero / section bg */
-        --footer: #0c0b09;
-        --dark-input: #1c1a17;
-        --dark-border: #3a362f;
+        /* Dark surfaces — warm charcoal ramp (page → elevated → panels) */
+        --footer: #24201b; /* page background (was near-black #0c0b09) */
+        --chrome: #2d2822; /* elevated sections a step above the page */
+        --dark-input: #37312a; /* lifted panels / cards */
+        --dark-border: #4a443c;
         --on-dark-heading: #fffdfa;
         --on-dark-body: #e8dfd3;
         --on-dark-muted: #a9a199;
@@ -132,8 +132,8 @@ const {
 
       body {
         margin: 0;
-        background: var(--paper);
-        color: var(--body);
+        background: var(--footer);
+        color: var(--on-dark-body);
         font-family: var(--font-sans);
         font-size: 17px;
         line-height: 1.6;
@@ -148,7 +148,7 @@ const {
         font-weight: 800;
         line-height: 1.2;
         letter-spacing: -0.01em;
-        color: var(--ink);
+        color: var(--on-dark-heading);
         margin: 0;
       }
 

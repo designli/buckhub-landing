@@ -241,9 +241,9 @@ const features = [
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(247, 244, 239, 0.85);
+    background: rgba(36, 32, 27, 0.72);
     backdrop-filter: saturate(140%) blur(10px);
-    border-bottom: 1px solid rgba(24, 31, 25, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
   .nav-inner {
     display: flex;
@@ -260,33 +260,81 @@ const features = [
   .nav-logo img {
     height: 52px;
     width: auto;
+    /* black & gray wordmark → white for the dark nav */
+    filter: invert(1) brightness(1.6);
   }
   .nav-cta {
     padding: 0.7rem 1.15rem;
     flex-shrink: 0;
   }
 
-  /* ---------- HERO (shared) ---------- */
+  /* ---------- HERO (shared) — dark photo-backed band ---------- */
   .hero {
-    padding: 4rem 0 5rem;
+    position: relative;
+    isolation: isolate;
+    padding: 4.5rem 0 5.5rem;
+    overflow: hidden;
+    /* near-black base: the photo dissolves into this instead of a hard edge */
+    background-color: var(--footer);
+  }
+  /* Layer 1: the pasture photo, muted / greyed-out */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    background: url("/buckhub-hero-longhorn.webp") center 44% / cover no-repeat;
+    filter: grayscale(0.4) saturate(0.62) brightness(0.9) contrast(1.02);
+  }
+  /* Layer 2: rust-black wash — dark left (headline contrast) → lighter right
+     (longhorn stays visible) + bottom vignette for a grounded finish */
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(
+        100deg,
+        rgba(12, 11, 9, 0.93) 0%,
+        rgba(12, 11, 9, 0.85) 24%,
+        rgba(14, 12, 10, 0.52) 40%,
+        rgba(18, 16, 14, 0.24) 56%,
+        rgba(18, 16, 14, 0.16) 100%
+      ),
+      linear-gradient(
+        to bottom,
+        rgba(36, 32, 27, 0.35) 0%,
+        rgba(36, 32, 27, 0) 32%,
+        rgba(36, 32, 27, 0.28) 62%,
+        rgba(36, 32, 27, 0.72) 84%,
+        rgba(36, 32, 27, 1) 100%
+      );
   }
   .hero-copy .lead {
     font-size: var(--fs-intro);
     font-weight: 600;
-    color: var(--pine);
+    color: var(--sage);
     margin: 1.1rem 0 0;
   }
   .hero-copy .subtitle {
     font-size: var(--fs-intro);
-    color: var(--ink);
+    color: var(--on-dark-body);
     margin: 1.25rem 0;
   }
   .hero-copy .subtitle em {
     font-style: italic;
-    color: var(--pine);
+    color: var(--sage);
   }
   .hero-copy h1 {
     font-size: var(--fs-display);
+    color: var(--on-rust);
+  }
+  /* Eyebrow pill re-tuned for the dark hero */
+  .hero .eyebrow {
+    background: rgba(160, 90, 44, 0.28);
+    color: var(--sage);
+    border: 1px solid rgba(224, 181, 136, 0.4);
   }
   .form-card {
     background: #fff;
@@ -299,6 +347,7 @@ const features = [
     font-family: var(--font-serif);
     font-size: var(--fs-card-title);
     font-weight: 700;
+    color: var(--ink);
     margin-bottom: 1.1rem;
   }
 
@@ -318,7 +367,7 @@ const features = [
   /* ---------- SHOWCASE ---------- */
   .media-spot {
     padding: 4.5rem 0 4rem;
-    background: var(--paper);
+    background: var(--footer);
   }
   .media-points {
     list-style: none;
@@ -333,7 +382,7 @@ const features = [
     position: relative;
     padding-left: 1.9rem;
     font-size: var(--fs-body);
-    color: var(--ink-muted);
+    color: var(--on-dark-body);
     text-align: left;
   }
   .media-points li::before {
@@ -354,7 +403,7 @@ const features = [
 
   .showcase {
     padding: 4.5rem 0 5rem;
-    background: linear-gradient(180deg, var(--paper), var(--band));
+    background: var(--footer);
   }
   .showcase-title {
     text-align: center;
@@ -362,7 +411,7 @@ const features = [
   }
   .showcase-sub {
     text-align: center;
-    color: var(--ink-muted);
+    color: var(--on-dark-muted);
     font-size: var(--fs-intro);
     max-width: 50ch;
     margin: 0 auto 3rem;
@@ -435,8 +484,9 @@ const features = [
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
-    background: var(--chrome);
-    color: var(--paper);
+    background: var(--dark-input);
+    color: var(--on-dark-body);
+    border: 1px solid var(--dark-border);
     padding: 0.55rem 1.1rem;
     border-radius: 12px;
     text-decoration: none;
@@ -468,7 +518,7 @@ const features = [
 
   /* ---------- FEATURES ---------- */
   .features {
-    background: linear-gradient(180deg, transparent, var(--pine-soft));
+    background: var(--footer);
     padding: 4.5rem 0;
   }
   .section-title {
@@ -481,11 +531,10 @@ const features = [
     gap: 1.5rem;
   }
   .feature-card {
-    background: #fff;
-    border: 1px solid rgba(24, 31, 25, 0.08);
+    background: var(--dark-input);
+    border: 1px solid var(--dark-border);
     border-radius: var(--radius);
     padding: 1.75rem;
-    box-shadow: var(--shadow);
   }
   .feature-num {
     font-family: var(--font-serif);
@@ -505,13 +554,13 @@ const features = [
     margin-bottom: 0.6rem;
   }
   .feature-card p {
-    color: var(--ink-muted);
+    color: var(--on-dark-muted);
     font-size: var(--fs-body);
   }
 
   /* ---------- BOTTOM CTA ---------- */
   .bottom-cta {
-    background: var(--chrome);
+    background: linear-gradient(180deg, #6a3d22 0%, #4d2c18 100%);
     color: var(--paper);
     padding: 4.5rem 0;
   }
@@ -591,14 +640,29 @@ const features = [
     }
     .hero-copy {
       background: transparent !important;
-      color: var(--ink) !important;
+      color: var(--on-rust) !important;
       padding: 0 !important;
     }
     .hero-copy .subtitle {
-      color: var(--ink) !important;
+      color: var(--on-dark-body) !important;
     }
     .hero-copy .subtitle em {
-      color: var(--pine) !important;
+      color: var(--sage) !important;
+    }
+    /* Mobile: lighter/smaller image + uniform darkening for centered text */
+    .hero::before {
+      background-image: url("/buckhub-hero-longhorn-mobile.webp");
+      background-position: center 38%;
+      background-size: cover;
+    }
+    .hero::after {
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(36, 32, 27, 0.78) 0%,
+          rgba(36, 32, 27, 0.62) 45%,
+          rgba(36, 32, 27, 0.72) 100%
+        );
     }
     .hero-form {
       width: 100% !important;
