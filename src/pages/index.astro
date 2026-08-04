@@ -153,6 +153,10 @@ const features = [
         </div>
       </div>
 
+      <p class="showcase-note">
+        Sample data — registration numbers shown are examples only.
+      </p>
+
       <div class="platforms">
         <div class="store-badges">
           <a
@@ -470,6 +474,13 @@ const features = [
     height: auto;
     border-radius: 24px;
   }
+  .showcase-note {
+    text-align: center;
+    color: var(--on-dark-faint);
+    font-size: var(--fs-small);
+    margin-top: 1.25rem;
+    font-style: italic;
+  }
   .platforms {
     text-align: center;
     margin-top: 2.75rem;
@@ -698,6 +709,11 @@ const features = [
     .phone {
       margin: 0;
       width: min(250px, 62vw);
+    }
+    /* The reg-number note points at the desktop screenshot, which is hidden
+       here — so hide the note on mobile too. */
+    .showcase-note {
+      display: none;
     }
   }
 
